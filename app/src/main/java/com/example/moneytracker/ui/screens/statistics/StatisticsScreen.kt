@@ -16,9 +16,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.patrykand.compose.chart.pie.PieChart
-import com.patrykand.compose.chart.pie.PieChartData
-import com.patrykand.compose.chart.pie.draw.PieChartColors
+import androidx.compose.ui.geometry.Size
+//import androidx.compose.ui.graphics.drawscope.drawArc
+import androidx.compose.foundation.Canvas
 import java.text.DecimalFormat
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -119,31 +119,48 @@ fun TotalSummaryCard(expense: Double, income: Double, decimalFormat: DecimalForm
 
 @Composable
 fun ExpensePieChart(stats: List<CategoryStat>) {
-    // Преобразование данных для PieChart
-    val pieChartData = stats.mapIndexed { index, stat ->
-        PieChartData.Slice(
-            value = stat.amount.toFloat(),
-            color = ChartColors[index % ChartColors.size], // Используем циклический набор цветов
-            label = stat.categoryName
-        )
-    }
 
-    if (pieChartData.isNotEmpty()) {
-        // Компонент круговой диаграммы
-        PieChart(
-            pieChartData = pieChartData,
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(300.dp),
-            // Настройка цветов (минимализм)
-            colors = PieChartColors(
-                contentColor = MaterialTheme.colorScheme.onSurface,
-                chartColor = MaterialTheme.colorScheme.primary, // Основной цвет не используется для каждого среза
-            ),
-            // Дополнительная настройка: можно добавить легенду, центр. текст и т.д.
-        )
+    // Total amount needed for percentage calculation
+    val totalAmount = stats.sumOf { it.amount }
+    if (totalAmount == 0.0) return
+
+    // Convert stats to angles and colors
+    var startAngle = 0f
+
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(300.dp)
+            .padding(16.dp)
+    ) {
+        // Compose Canvas: для рисования 2D графики
+        Canvas(modifier = Modifier.fillMaxSize()) {
+            val canvasSize = size.minDimension
+            val radius = canvasSize / 2f
+            val circleSize = Size(radius * 2, radius * 2)
+
+            stats.forEachIndexed { index, stat ->
+                // Расчет угла для текущего среза
+                val sweepAngle = (stat.amount / totalAmount * 360).toFloat()
+
+                // Рисование среза (Arc)
+                drawArc(
+                    color = ChartColors[index % ChartColors.size],
+                    startAngle = startAngle,
+                    sweepAngle = sweepAngle,
+                    useCenter = true, // Соединить с центром для создания "пирога"
+                    topLeft = androidx.compose.ui.geometry.Offset(
+                        (size.width - circleSize.width) / 2,
+                        (size.height - circleSize.height) / 2
+                    ),
+                    size = circleSize
+                )
+                startAngle += sweepAngle
+            }
+        }
     }
 }
+
 
 @Composable
 fun CategoryStatItem(stat: CategoryStat, decimalFormat: DecimalFormat) {

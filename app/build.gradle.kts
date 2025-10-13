@@ -78,5 +78,4 @@ dependencies {
     implementation(libs.androidx.work.runtime.ktx)
     implementation(libs.androidx.material3.v120)
     implementation(libs.androidx.hilt.navigation.compose)
-    implementation(libs.compose.charts.pie)
 }
