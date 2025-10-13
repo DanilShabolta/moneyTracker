@@ -1,35 +1,40 @@
 package com.example.moneytracker.di
 
-import android.content.Context
+import android.app.Application
 import androidx.room.Room
 import com.example.moneytracker.data.db.AppDatabase
 import com.example.moneytracker.data.db.dao.TransactionDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
 @Module
-@InstallIn(SingletonComponent::class) // Модуль будет существовать, пока живо приложение
+@InstallIn(SingletonComponent::class)
 object DatabaseModule {
 
+    /**
+     * Hilt Provider: Предоставляет экземпляр AppDatabase.
+     */
     @Provides
     @Singleton
-    fun provideDatabase(
-        @ApplicationContext context: Context
-    ): AppDatabase {
+    fun provideDatabase(app: Application): AppDatabase {
         return Room.databaseBuilder(
-            context,
+            app,
             AppDatabase::class.java,
             "money_tracker_db"
-        ).build()
+        )
+            .fallbackToDestructiveMigration()
+            .build()
     }
 
+    /**
+     * Hilt Provider: Предоставляет экземпляр TransactionDao.
+     */
     @Provides
     @Singleton
-    fun provideTransactionDao(database: AppDatabase): TransactionDao {
-        return database.transactionDao()
+    fun provideTransactionDao(db: AppDatabase): TransactionDao {
+        return db.transactionDao()
     }
 }
