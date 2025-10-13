@@ -20,11 +20,10 @@ class MoneyTrackerApp : Application(), Configuration.Provider {
     lateinit var workerFactory: HiltWorkerFactory
 
     // 2. Предоставление конфигурации WorkManager для Hilt
-    override fun getWorkManagerConfiguration(): Configuration {
-        return Configuration.Builder()
+    override val workManagerConfiguration: Configuration
+        get() = Configuration.Builder()
             .setWorkerFactory(workerFactory)
             .build()
-    }
 
     override fun onCreate() {
         super.onCreate()
