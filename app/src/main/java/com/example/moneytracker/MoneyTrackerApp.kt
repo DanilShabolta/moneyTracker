@@ -12,8 +12,7 @@ import java.util.Calendar
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
-@HiltAndroidApp // Основной класс для Hilt
-// Реализуем Configuration.Provider, чтобы Hilt мог управлять WorkManager
+@HiltAndroidApp
 class MoneyTrackerApp : Application(), Configuration.Provider {
 
     // 1. Внедрение HiltWorkerFactory (требует Inject)
