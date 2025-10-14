@@ -1,14 +1,14 @@
 [versions]
 activityCompose = "..."
-agp = "8.7.1"
+agp = "8.13.0"
 composeChartsPie = "0.4.0"
 coreKtxVersion = "..."
 hiltAndroid = "..."
-hiltAndroidVersion = "2.50"
-hiltCompiler = "2.50"
+hiltAndroidVersion = "2.57.2"
+hiltCompiler = "2.57.2"
 hiltNavigationCompose = "1.3.0"
-kotlin = "1.9.24"
-coreKtx = "1.15.0"
+kotlin = "2.0.20"
+coreKtx = "1.17.0"
 junit = "4.13.2"
 junitVersion = "1.2.1"
 espressoCore = "3.6.1"
@@ -26,12 +26,13 @@ roomKtx = "2.6.1"
 roomRuntime = "2.6.1"
 roomVersion = "2.6.1"
 ui = "..."
+uiToolingPreview = "1.9.3"
 workRuntimeKtx = "..."
 roomCommonJvm = "2.8.2"
 navigationRuntimeAndroid = "2.9.5"
 navigationComposeAndroid = "2.9.5"
 foundationAndroid = "1.9.3"
-workRuntimeKtxVersion = "2.9.0"
+workRuntimeKtxVersion = "2.10.5"
 
 [libraries]
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "activityCompose" }
@@ -50,6 +51,8 @@ androidx-room-ktx-v261 = { module = "androidx.room:room-ktx", version.ref = "roo
 androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "roomCompiler" }
 androidx-room-runtime-v261 = { module = "androidx.room:room-runtime", version.ref = "roomRuntime" }
 androidx-ui = { module = "androidx.compose.ui:ui", version.ref = "ui" }
+androidx-ui-tooling = { module = "androidx.compose.ui:ui-tooling", version.ref = "uiToolingPreview" }
+androidx-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview", version.ref = "uiToolingPreview" }
 androidx-work-runtime-ktx = { module = "androidx.work:work-runtime-ktx", version.ref = "workRuntimeKtx" }
 androidx-work-runtime-ktx-v290 = { module = "androidx.work:work-runtime-ktx", version.ref = "workRuntimeKtxVersion" }
 compose-chart = { group = "com.github.PatrykJankowski", name = "compose-chart", version.ref = "composeChartsPie" }
