@@ -24,17 +24,16 @@ import androidx.compose.ui.graphics.Color
 @Composable
 fun AddEditScreen(
     navController: NavController,
-    transactionId: Int?, // null, если добавляем; ID, если редактируем
+    transactionId: Int?,
     viewModel: AddEditViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsState()
     val context = LocalContext.current
 
-    // Эффект для навигации после успешного сохранения
     LaunchedEffect(state.saveSuccess) {
         if (state.saveSuccess) {
             Toast.makeText(context, "Запись сохранена!", Toast.LENGTH_SHORT).show()
-            navController.popBackStack() // Возврат на предыдущий экран
+            navController.popBackStack()
         }
     }
 
@@ -57,7 +56,6 @@ fun AddEditScreen(
                 .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // 1. Выбор типа (Расход/Доход)
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.Center
@@ -79,7 +77,6 @@ fun AddEditScreen(
             }
             Spacer(modifier = Modifier.height(16.dp))
 
-            // 2. Поле суммы
             OutlinedTextField(
                 value = state.amount,
                 onValueChange = viewModel::onAmountChange,
@@ -89,7 +86,6 @@ fun AddEditScreen(
             )
             Spacer(modifier = Modifier.height(8.dp))
 
-            // 3. Поле категории
             OutlinedTextField(
                 value = state.categoryName,
                 onValueChange = viewModel::onCategoryChange,
@@ -98,7 +94,6 @@ fun AddEditScreen(
             )
             Spacer(modifier = Modifier.height(8.dp))
 
-            // 4. Поле описания
             OutlinedTextField(
                 value = state.description,
                 onValueChange = viewModel::onDescriptionChange,
@@ -107,7 +102,6 @@ fun AddEditScreen(
             )
             Spacer(modifier = Modifier.height(8.dp))
 
-            // 5. Выбор даты
             DateSelectionField(
                 dateMillis = state.date,
                 onShowDatePicker = { viewModel.onShowDatePicker(true) }
@@ -115,7 +109,6 @@ fun AddEditScreen(
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            // 6. Кнопка сохранения
             Button(
                 onClick = viewModel::saveTransaction,
                 enabled = !state.isSaving,
@@ -132,7 +125,6 @@ fun AddEditScreen(
         }
     }
 
-    // Отображение диалога выбора даты
     if (state.showDatePicker) {
         DatePickerDialog(
             initialSelectedDateMillis = state.date,
@@ -142,7 +134,6 @@ fun AddEditScreen(
     }
 }
 
-// Вспомогательный Composable для выбора даты
 @Composable
 fun DateSelectionField(dateMillis: Long, onShowDatePicker: () -> Unit) {
     val formatter = remember { SimpleDateFormat("dd.MM.yyyy", Locale.getDefault()) }
@@ -158,7 +149,6 @@ fun DateSelectionField(dateMillis: Long, onShowDatePicker: () -> Unit) {
     }
 }
 
-// Вспомогательный Composable для DatePicker (используем Material3 DatePicker)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DatePickerDialog(
@@ -170,8 +160,6 @@ fun DatePickerDialog(
         initialSelectedDateMillis = initialSelectedDateMillis
     )
 
-    // В Compose 1.2.0 DatePickerDialog требует Dialog (или использовать Compose Material)
-    // Для простоты здесь показан принцип:
     AlertDialog(
         onDismissRequest = onDismiss,
         title = { Text("Выберите дату") },

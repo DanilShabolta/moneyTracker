@@ -11,14 +11,12 @@ import kotlinx.coroutines.launch
 import java.util.Calendar
 import javax.inject.Inject
 
-// Модель для отображения статистики по категории
 data class CategoryStat(
     val categoryName: String,
     val amount: Double,
     val percentage: Float
 )
 
-// Состояние экрана статистики
 data class StatisticsState(
     val totalExpense: Double = 0.0,
     val totalIncome: Double = 0.0,
@@ -44,13 +42,11 @@ class StatisticsViewModel @Inject constructor(
             _state.value = _state.value.copy(isLoading = true)
 
             val calendar = Calendar.getInstance()
-            calendar.set(Calendar.DAY_OF_MONTH, 1) // Начало месяца
+            calendar.set(Calendar.DAY_OF_MONTH, 1)
             val startDate = calendar.timeInMillis
             val endDate = System.currentTimeMillis()
 
-            // 1. Получаем все транзакции за период
             repository.getAllTransactions()
-                // Фильтруем по периоду в Flow
                 .map { entities -> entities.filter { it.date in startDate..endDate } }
                 .map { entities -> entities.map { it.toDomain() } }
                 .collect { transactions ->
@@ -62,7 +58,6 @@ class StatisticsViewModel @Inject constructor(
                         .filter { it.type == TransactionType.INCOME }
                         .sumOf { it.amount }
 
-                    // 2. Группировка расходов по категориям
                     val expensesByCategory = transactions
                         .filter { it.type == TransactionType.EXPENSE }
                         .groupBy { it.categoryName }
@@ -73,7 +68,6 @@ class StatisticsViewModel @Inject constructor(
                         }
                         .sortedByDescending { it.amount }
 
-                    // 3. Обновляем State
                     _state.value = _state.value.copy(
                         totalExpense = totalExpense,
                         totalIncome = totalIncome,

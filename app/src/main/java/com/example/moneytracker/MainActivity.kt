@@ -7,7 +7,7 @@ import com.example.moneytracker.ui.navigation.AppNavHost
 import com.example.moneytracker.ui.theme.MoneyTrackerTheme
 import dagger.hilt.android.AndroidEntryPoint
 
-@AndroidEntryPoint // Необходим для внедрения ViewModel в Compose
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

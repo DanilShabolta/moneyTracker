@@ -38,11 +38,9 @@ class AddEditViewModel @Inject constructor(
     private val _state = MutableStateFlow(AddEditState())
     val state: StateFlow<AddEditState> = _state.asStateFlow()
 
-    // Аргумент навигации
-    private val transactionId: Int? = savedStateHandle.get<String>("transactionId")?.toIntOrNull()
+    private val transactionId: Int? = savedStateHandle.get<Int>("transactionId")
 
     init {
-        // Если ID существует и больше 0, загружаем данные для редактирования
         if (transactionId != null && transactionId > 0) {
             loadTransaction(transactionId)
         }
@@ -50,9 +48,7 @@ class AddEditViewModel @Inject constructor(
 
     private fun loadTransaction(id: Int) {
         viewModelScope.launch {
-            // Теперь вызываем метод репозитория для загрузки одной транзакции
             repository.getTransactionById(id)?.let { entity ->
-                // Преобразуем Entity в Domain Model и обновляем State
                 val transaction = entity.toDomain()
                 _state.value = _state.value.copy(
                     id = transaction.id,
@@ -68,7 +64,6 @@ class AddEditViewModel @Inject constructor(
         }
     }
 
-    // --- Методы обновления состояния формы ---
     fun onAmountChange(newAmount: String) {
         _state.value = _state.value.copy(amount = newAmount, error = null)
     }
@@ -93,11 +88,9 @@ class AddEditViewModel @Inject constructor(
         _state.value = _state.value.copy(showDatePicker = show)
     }
 
-    // --- Метод сохранения ---
     fun saveTransaction() {
         val currentState = _state.value
 
-        // 1. Валидация
         val amountValue = currentState.amount.toDoubleOrNull()
         if (amountValue == null || amountValue <= 0) {
             _state.value = currentState.copy(error = "Введите корректную сумму.")
@@ -108,12 +101,10 @@ class AddEditViewModel @Inject constructor(
             return
         }
 
-        // 2. Сохранение
         _state.value = currentState.copy(isSaving = true, error = null)
 
         viewModelScope.launch {
             val transactionToSave = Transaction(
-                // Если id null, Room присвоит новый
                 id = currentState.id ?: 0,
                 amount = amountValue,
                 categoryName = currentState.categoryName.trim(),
@@ -122,10 +113,8 @@ class AddEditViewModel @Inject constructor(
                 type = currentState.type
             )
 
-            // Преобразование и вставка
             repository.insertTransaction(transactionToSave.toEntity())
 
-            // Успех
             _state.value = currentState.copy(isSaving = false, saveSuccess = true)
         }
     }

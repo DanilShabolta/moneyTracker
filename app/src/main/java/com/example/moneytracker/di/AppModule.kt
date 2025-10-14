@@ -12,7 +12,6 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 abstract class AppModule {
 
-    // Привязываем интерфейс к конкретной реализации
     @Binds
     @Singleton
     abstract fun bindTransactionRepository(

@@ -8,7 +8,6 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 
-// 1. Определение цветовых схем (можно использовать любые цвета)
 private val DarkColorScheme = darkColorScheme(
     primary = Color(0xFF90CAF9), // Светло-голубой
     secondary = Color(0xFF80CBC4), // Светло-бирюзовый
@@ -27,21 +26,19 @@ private val LightColorScheme = lightColorScheme(
     onPrimary = Color.White
 )
 
-// 2. Composable функция темы
 @Composable
 fun MoneyTrackerTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable () -> Unit
 ) {
     val colorScheme = when {
-        // Мы можем добавить логику для Android 12+ (динамические цвета), но пока оставим простую логику.
         darkTheme -> DarkColorScheme
         else -> LightColorScheme
     }
 
     MaterialTheme(
         colorScheme = colorScheme,
-        typography = Typography(), // Используем стандартную типографику
+        typography = Typography(),
         content = content
     )
 }

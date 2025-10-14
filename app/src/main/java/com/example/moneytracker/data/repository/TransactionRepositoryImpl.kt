@@ -6,7 +6,6 @@ import com.example.moneytracker.data.db.entities.TransactionType
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
-// Аннотация @Inject для внедрения зависимостей через Hilt
 class TransactionRepositoryImpl @Inject constructor(
     private val dao: TransactionDao
 ) : TransactionRepository {
@@ -36,7 +35,6 @@ class TransactionRepositoryImpl @Inject constructor(
     }
 
     override fun getFilteredTransactions(type: TransactionType?): Flow<List<TransactionEntity>> {
-        // Простая логика фильтрации в Repository
         return if (type == null) {
             dao.getAllTransactions()
         } else {

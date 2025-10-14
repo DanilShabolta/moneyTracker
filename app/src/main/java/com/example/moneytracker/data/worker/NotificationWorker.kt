@@ -11,14 +11,12 @@ import androidx.work.WorkerParameters
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 
-// Временно используем импорт, который не вызовет ошибки, если R.drawable.ic_launcher_foreground не найден
 private const val ICON_ID = android.R.drawable.ic_dialog_info
 
 @HiltWorker
 class NotificationWorker @AssistedInject constructor(
     @Assisted appContext: Context,
     @Assisted workerParams: WorkerParameters
-    // TransactionRepository можно внедрить, если нужно проверять данные, но пока не будем, чтобы не усложнять.
 ) : CoroutineWorker(appContext, workerParams) {
 
     companion object {

@@ -14,9 +14,6 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object DatabaseModule {
 
-    /**
-     * Hilt Provider: Предоставляет экземпляр AppDatabase.
-     */
     @Provides
     @Singleton
     fun provideDatabase(app: Application): AppDatabase {
@@ -29,9 +26,6 @@ object DatabaseModule {
             .build()
     }
 
-    /**
-     * Hilt Provider: Предоставляет экземпляр TransactionDao.
-     */
     @Provides
     @Singleton
     fun provideTransactionDao(db: AppDatabase): TransactionDao {

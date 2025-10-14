@@ -9,9 +9,7 @@ import javax.inject.Inject
 class GetTotalBalanceUseCase @Inject constructor(
     private val repository: TransactionRepository
 ) {
-    // Оператор 'invoke' позволяет вызывать класс как функцию: useCase()
     operator fun invoke(startDate: Long, endDate: Long): Flow<Double> {
-        // Получаем сумму доходов и расходов за период
         val incomeFlow = repository.getTotalAmountByTypeAndPeriod(
             TransactionType.INCOME,
             startDate,
@@ -23,12 +21,10 @@ class GetTotalBalanceUseCase @Inject constructor(
             endDate
         )
 
-        // Комбинируем два потока и вычисляем баланс
         return incomeFlow.combine(expenseFlow) { income, expense ->
             val totalIncome = income ?: 0.0
             val totalExpense = expense ?: 0.0
 
-            // Расчет: Доходы - Расходы
             totalIncome - totalExpense
         }
     }

@@ -22,9 +22,8 @@ import com.example.moneytracker.ui.navigation.Routes
 @Composable
 fun HomeScreen(
     navController: NavController,
-    viewModel: HomeViewModel = hiltViewModel() // Получение ViewModel через Hilt
+    viewModel: HomeViewModel = hiltViewModel()
 ) {
-    // Собираем (коллектим) StateFlow в Compose State
     val state by viewModel.state.collectAsState()
 
     Scaffold(
@@ -32,16 +31,14 @@ fun HomeScreen(
             TopAppBar(title = { Text("Трекер Расходов") })
         },
         floatingActionButton = {
-            // Кнопка для добавления новой записи
             FloatingActionButton(
-                onClick = { navController.navigate(Routes.ADD_EDIT.replace("/{transactionId}", "")) }
+                onClick = { navController.navigate(Routes.ADD) } // ← Создание
             ) {
                 Icon(Icons.Filled.Add, contentDescription = "Добавить запись")
             }
         }
     ) { paddingValues ->
         if (state.isLoading) {
-            // Показать индикатор загрузки, пока данные загружаются
             Box(Modifier.fillMaxSize()) {
                 CircularProgressIndicator()
             }
@@ -52,14 +49,12 @@ fun HomeScreen(
                     .padding(paddingValues)
                     .padding(horizontal = 16.dp)
             ) {
-                // Отображение общего баланса
                 Text(
                     text = "Баланс за год: ${"%.2f".format(state.totalBalance)} ₽",
                     style = MaterialTheme.typography.headlineMedium,
                     modifier = Modifier.padding(vertical = 8.dp)
                 )
 
-                // Список транзакций
                 LazyColumn(
                     modifier = Modifier.fillMaxWidth(),
                     contentPadding = PaddingValues(top = 8.dp)
@@ -68,8 +63,7 @@ fun HomeScreen(
                         TransactionItem(
                             transaction = transaction,
                             onEdit = {
-                                // Переход к экрану редактирования
-                                navController.navigate(Routes.ADD_EDIT.replace("{transactionId}", transaction.id.toString()))
+                                navController.navigate(Routes.EDIT.replace("{transactionId}", transaction.id.toString()))
                             },
                             onDelete = {
                                 viewModel.onEvent(HomeEvent.DeleteTransaction(transaction))
@@ -92,7 +86,7 @@ fun TransactionItem(
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 4.dp),
-        onClick = onEdit // Клик для редактирования
+        onClick = onEdit
     ) {
         Row(
             modifier = Modifier
@@ -104,13 +98,11 @@ fun TransactionItem(
                 Text(transaction.categoryName, style = MaterialTheme.typography.titleMedium)
                 Text(transaction.description, style = MaterialTheme.typography.bodySmall, color = Color.Gray)
             }
-            // Сумма с цветом в зависимости от типа
             Text(
                 text = "${"%.2f".format(transaction.amount)} ₽",
                 color = if (transaction.type == TransactionType.INCOME) Color.Green else Color.Red,
                 style = MaterialTheme.typography.titleMedium
             )
-            // (В реальном приложении здесь лучше использовать контекстное меню для удаления)
         }
     }
 }

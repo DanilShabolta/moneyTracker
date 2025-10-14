@@ -54,7 +54,6 @@ fun StatisticsScreen(
                     .padding(horizontal = 16.dp),
                 contentPadding = PaddingValues(vertical = 16.dp)
             ) {
-                // Заголовок отчета
                 item {
                     Text(
                         text = "Отчет за: ${state.periodLabel}",
@@ -63,7 +62,6 @@ fun StatisticsScreen(
                     )
                 }
 
-                // Общие итоги
                 item {
                     TotalSummaryCard(
                         expense = state.totalExpense,
@@ -73,7 +71,6 @@ fun StatisticsScreen(
                     Spacer(modifier = Modifier.height(24.dp))
                 }
 
-                // График (Круговая диаграмма расходов)
                 if (state.totalExpense > 0) {
                     item {
                         Text("Распределение расходов по категориям", style = MaterialTheme.typography.titleMedium, modifier = Modifier.padding(bottom = 8.dp))
@@ -81,7 +78,6 @@ fun StatisticsScreen(
                         Spacer(modifier = Modifier.height(24.dp))
                     }
 
-                    // Детальный список по категориям
                     item {
                         Text("Детализация", style = MaterialTheme.typography.titleMedium, modifier = Modifier.padding(bottom = 8.dp))
                     }
@@ -120,11 +116,9 @@ fun TotalSummaryCard(expense: Double, income: Double, decimalFormat: DecimalForm
 @Composable
 fun ExpensePieChart(stats: List<CategoryStat>) {
 
-    // Total amount needed for percentage calculation
     val totalAmount = stats.sumOf { it.amount }
     if (totalAmount == 0.0) return
 
-    // Convert stats to angles and colors
     var startAngle = 0f
 
     Card(
@@ -133,22 +127,19 @@ fun ExpensePieChart(stats: List<CategoryStat>) {
             .height(300.dp)
             .padding(16.dp)
     ) {
-        // Compose Canvas: для рисования 2D графики
         Canvas(modifier = Modifier.fillMaxSize()) {
             val canvasSize = size.minDimension
             val radius = canvasSize / 2f
             val circleSize = Size(radius * 2, radius * 2)
 
             stats.forEachIndexed { index, stat ->
-                // Расчет угла для текущего среза
                 val sweepAngle = (stat.amount / totalAmount * 360).toFloat()
 
-                // Рисование среза (Arc)
                 drawArc(
                     color = ChartColors[index % ChartColors.size],
                     startAngle = startAngle,
                     sweepAngle = sweepAngle,
-                    useCenter = true, // Соединить с центром для создания "пирога"
+                    useCenter = true,
                     topLeft = androidx.compose.ui.geometry.Offset(
                         (size.width - circleSize.width) / 2,
                         (size.height - circleSize.height) / 2
@@ -181,13 +172,12 @@ fun CategoryStatItem(stat: CategoryStat, decimalFormat: DecimalFormat) {
     Divider()
 }
 
-// Набор спокойных цветов для минималистичного дизайна
 val ChartColors = listOf(
-    Color(0xFF64B5F6), // Светло-голубой
-    Color(0xFF81C784), // Светло-зеленый
-    Color(0xFFFFB74D), // Светло-оранжевый
-    Color(0xFFE57373), // Светло-красный
-    Color(0xFF9575CD), // Светло-фиолетовый
-    Color(0xFF4DB6AC), // Бирюзовый
-    Color(0xFFF06292)  // Розовый
+    Color(0xFF64B5F6),
+    Color(0xFF81C784),
+    Color(0xFFFFB74D),
+    Color(0xFFE57373),
+    Color(0xFF9575CD),
+    Color(0xFF4DB6AC),
+    Color(0xFFF06292)
 )
