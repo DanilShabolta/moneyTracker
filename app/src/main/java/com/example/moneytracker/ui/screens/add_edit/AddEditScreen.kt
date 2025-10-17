@@ -10,6 +10,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -18,7 +19,6 @@ import androidx.navigation.NavController
 import com.example.moneytracker.data.db.entities.TransactionType
 import java.text.SimpleDateFormat
 import java.util.*
-import androidx.compose.ui.graphics.Color
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -29,12 +29,32 @@ fun AddEditScreen(
 ) {
     val state by viewModel.state.collectAsState()
     val context = LocalContext.current
+    var showDeleteDialog by remember { mutableStateOf(false) }
 
     LaunchedEffect(state.saveSuccess) {
         if (state.saveSuccess) {
             Toast.makeText(context, "Запись сохранена!", Toast.LENGTH_SHORT).show()
             navController.popBackStack()
         }
+    }
+
+    LaunchedEffect(state.deleteSuccess) {
+        if (state.deleteSuccess) {
+            Toast.makeText(context, "Запись удалена!", Toast.LENGTH_SHORT).show()
+            navController.popBackStack()
+        }
+    }
+
+    if (showDeleteDialog) {
+        DeleteConfirmationDialog(
+            onConfirm = {
+                viewModel.deleteTransaction()
+                showDeleteDialog = false
+            },
+            onDismiss = {
+                showDeleteDialog = false
+            }
+        )
     }
 
     Scaffold(
@@ -109,6 +129,7 @@ fun AddEditScreen(
 
             Spacer(modifier = Modifier.height(24.dp))
 
+            // Кнопка Сохранить
             Button(
                 onClick = viewModel::saveTransaction,
                 enabled = !state.isSaving,
@@ -120,6 +141,23 @@ fun AddEditScreen(
                     CircularProgressIndicator(color = Color.White, modifier = Modifier.size(24.dp))
                 } else {
                     Text("Сохранить Запись")
+                }
+            }
+
+            if (transactionId != null) {
+                Spacer(modifier = Modifier.height(8.dp))
+                Button(
+                    onClick = { showDeleteDialog = true },
+                    enabled = !state.isSaving,
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.error, // Используем цвет ошибки из темы
+                        contentColor = MaterialTheme.colorScheme.onError
+                    ),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(50.dp)
+                ) {
+                    Text("Удалить")
                 }
             }
         }
@@ -160,12 +198,8 @@ fun DatePickerDialog(
         initialSelectedDateMillis = initialSelectedDateMillis
     )
 
-    AlertDialog(
+    DatePickerDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Выберите дату") },
-        text = {
-            DatePicker(state = datePickerState)
-        },
         confirmButton = {
             TextButton(
                 onClick = {
@@ -176,6 +210,33 @@ fun DatePickerDialog(
         },
         dismissButton = {
             TextButton(onClick = onDismiss) { Text("Отмена") }
+        }
+    ) {
+        DatePicker(state = datePickerState)
+    }
+}
+
+@Composable
+fun DeleteConfirmationDialog(
+    onConfirm: () -> Unit,
+    onDismiss: () -> Unit
+) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text("Подтверждение") },
+        text = { Text("Вы уверены, что хотите удалить эту запись?") },
+        confirmButton = {
+            TextButton(
+                onClick = onConfirm,
+                colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.error)
+            ) {
+                Text("Удалить")
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text("Отмена")
+            }
         }
     )
 }

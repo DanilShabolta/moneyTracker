@@ -3,6 +3,7 @@ package com.example.moneytracker.ui.screens.add_edit
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.moneytracker.data.db.entities.TransactionEntity
 import com.example.moneytracker.data.db.entities.TransactionType
 import com.example.moneytracker.data.repository.TransactionRepository
 import com.example.moneytracker.domain.model.Transaction
@@ -12,6 +13,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject // <-- Убедитесь, что этот импорт есть!
 
@@ -26,7 +28,8 @@ data class AddEditState(
     val isSaving: Boolean = false,
     val saveSuccess: Boolean = false,
     val showDatePicker: Boolean = false,
-    val error: String? = null // Добавим поле для ошибок
+    val error: String? = null,
+    val deleteSuccess: Boolean = false
 )
 
 @HiltViewModel
@@ -116,6 +119,24 @@ class AddEditViewModel @Inject constructor(
             repository.insertTransaction(transactionToSave.toEntity())
 
             _state.value = currentState.copy(isSaving = false, saveSuccess = true)
+        }
+    }
+
+    fun deleteTransaction() {
+        val currentId = state.value.id ?: return
+
+        viewModelScope.launch {
+            val transactionToDelete = TransactionEntity(
+                id = currentId,
+                amount = state.value.amount.toDoubleOrNull() ?: 0.0,
+                type = state.value.type,
+                categoryName = state.value.categoryName,
+                description = state.value.description,
+                date = state.value.date
+            )
+
+            repository.deleteTransaction(transactionToDelete)
+            _state.update { it.copy(deleteSuccess = true) }
         }
     }
 }
