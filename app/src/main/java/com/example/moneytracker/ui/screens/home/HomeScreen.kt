@@ -5,6 +5,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -28,11 +29,21 @@ fun HomeScreen(
 
     Scaffold(
         topBar = {
-            TopAppBar(title = { Text("Трекер Расходов") })
+            TopAppBar(
+                title = { Text("Трекер Расходов") },
+                actions = {
+                    IconButton(onClick = { navController.navigate(Routes.STATS) }) {
+                        Icon(
+                            imageVector = Icons.Filled.Info,
+                            contentDescription = "Статистика"
+                        )
+                    }
+                }
+            )
         },
         floatingActionButton = {
             FloatingActionButton(
-                onClick = { navController.navigate(Routes.ADD) } // ← Создание
+                onClick = { navController.navigate(Routes.ADD) }
             ) {
                 Icon(Icons.Filled.Add, contentDescription = "Добавить запись")
             }
